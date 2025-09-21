@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupDebugRoutes } from "./debug-routes";
 import { 
   insertMoodEntrySchema,
   insertJournalEntrySchema,
@@ -11,6 +12,9 @@ import { analyzeSentiment, analyzeTone, generateChatResponse, generateMoodInsigh
 import { generateActivitySuggestions, generateContentRecommendations, enhanceChatResponse } from "./services/openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup debug routes for table creation and troubleshooting
+  setupDebugRoutes(app);
+  
   // Mock user ID for demo (in production, this would come from authentication)
   const MOCK_USER_ID = "user_1";
 

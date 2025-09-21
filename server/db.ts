@@ -1,14 +1,11 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle, type NeonDatabase } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
-
 let pool: Pool | null = null;
-let db: NeonDatabase<typeof schema> | null = null;
+let db: ReturnType<typeof drizzle> | null = null;
 
-function getDb(): NeonDatabase<typeof schema> {
+function getDb() {
   if (!db) {
     if (!process.env.DATABASE_URL) {
       throw new Error(
@@ -16,8 +13,11 @@ function getDb(): NeonDatabase<typeof schema> {
       );
     }
     
-    pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    db = drizzle({ client: pool, schema });
+    pool = new Pool({ 
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false } // Required for Supabase
+    });
+    db = drizzle(pool, { schema });
   }
   return db;
 }

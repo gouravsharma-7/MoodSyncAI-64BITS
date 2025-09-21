@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { bootstrapDatabase } from "./bootstrap";
 
 const app = express();
 app.use(express.json());
