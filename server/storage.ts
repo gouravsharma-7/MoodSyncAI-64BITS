@@ -55,32 +55,32 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
+    const [user] = await db().select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db().select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+    const [user] = await db().select().from(users).where(eq(users.email, email));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(insertUser).returning();
+    const [user] = await db().insert(users).values(insertUser).returning();
     return user;
   }
 
   async createMoodEntry(moodEntry: InsertMoodEntry): Promise<MoodEntry> {
-    const [entry] = await db.insert(moodEntries).values(moodEntry).returning();
+    const [entry] = await db().insert(moodEntries).values(moodEntry).returning();
     return entry;
   }
 
   async getMoodEntries(userId: string, limit: number = 50): Promise<MoodEntry[]> {
-    return await db
+    return await db()
       .select()
       .from(moodEntries)
       .where(eq(moodEntries.userId, userId))
@@ -89,7 +89,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getMoodEntriesInRange(userId: string, startDate: Date, endDate: Date): Promise<MoodEntry[]> {
-    return await db
+    return await db()
       .select()
       .from(moodEntries)
       .where(
@@ -103,12 +103,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createJournalEntry(journalEntry: InsertJournalEntry): Promise<JournalEntry> {
-    const [entry] = await db.insert(journalEntries).values(journalEntry).returning();
+    const [entry] = await db().insert(journalEntries).values(journalEntry).returning();
     return entry;
   }
 
   async getJournalEntries(userId: string, limit: number = 20): Promise<JournalEntry[]> {
-    return await db
+    return await db()
       .select()
       .from(journalEntries)
       .where(eq(journalEntries.userId, userId))
@@ -117,12 +117,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getJournalEntry(id: string): Promise<JournalEntry | undefined> {
-    const [entry] = await db.select().from(journalEntries).where(eq(journalEntries.id, id));
+    const [entry] = await db().select().from(journalEntries).where(eq(journalEntries.id, id));
     return entry || undefined;
   }
 
   async updateJournalEntry(id: string, updates: Partial<JournalEntry>): Promise<JournalEntry> {
-    const [entry] = await db
+    const [entry] = await db()
       .update(journalEntries)
       .set(updates)
       .where(eq(journalEntries.id, id))
@@ -131,12 +131,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createChatMessage(chatMessage: InsertChatMessage): Promise<ChatMessage> {
-    const [message] = await db.insert(chatMessages).values(chatMessage).returning();
+    const [message] = await db().insert(chatMessages).values(chatMessage).returning();
     return message;
   }
 
   async getChatMessages(userId: string, limit: number = 50): Promise<ChatMessage[]> {
-    return await db
+    return await db()
       .select()
       .from(chatMessages)
       .where(eq(chatMessages.userId, userId))
@@ -145,7 +145,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserPreferences(userId: string): Promise<UserPreferences | undefined> {
-    const [preferences] = await db
+    const [preferences] = await db()
       .select()
       .from(userPreferences)
       .where(eq(userPreferences.userId, userId));
@@ -153,12 +153,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
-    const [userPref] = await db.insert(userPreferences).values(preferences).returning();
+    const [userPref] = await db().insert(userPreferences).values(preferences).returning();
     return userPref;
   }
 
   async updateUserPreferences(userId: string, updates: Partial<UserPreferences>): Promise<UserPreferences> {
-    const [preferences] = await db
+    const [preferences] = await db()
       .update(userPreferences)
       .set(updates)
       .where(eq(userPreferences.userId, userId))
@@ -167,18 +167,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createContentRecommendation(recommendation: InsertContentRecommendation): Promise<ContentRecommendation> {
-    const [rec] = await db.insert(contentRecommendations).values(recommendation).returning();
+    const [rec] = await db().insert(contentRecommendations).values(recommendation).returning();
     return rec;
   }
 
   async getContentRecommendations(userId: string, mood?: number, limit: number = 20): Promise<ContentRecommendation[]> {
-    let query = db
+    let query = db()
       .select()
       .from(contentRecommendations)
       .where(eq(contentRecommendations.userId, userId));
 
     if (mood !== undefined) {
-      return await db
+      return await db()
         .select()
         .from(contentRecommendations)
         .where(and(eq(contentRecommendations.userId, userId), eq(contentRecommendations.mood, mood)))
